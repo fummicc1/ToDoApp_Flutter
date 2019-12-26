@@ -12,4 +12,7 @@ class HomeBLoC with BaseBLoC<UserModel, void> {
     controller.addStream(userStream);
   }
 
+  void signin([bool isAnonymous = true]) {
+    if (isAnonymous) repository.signinAnonymously();
+  }
 }

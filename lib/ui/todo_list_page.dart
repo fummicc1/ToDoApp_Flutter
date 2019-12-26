@@ -19,7 +19,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
       builder: (context, snapShot) {
         if (!snapShot.hasData) {
           return Center(
-            child: Text("Loading..."),
+            child: Text("ToDoが見つかりませんでした..."),
           );
         }
 

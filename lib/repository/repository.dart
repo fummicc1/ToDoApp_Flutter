@@ -15,4 +15,6 @@ class Repository {
   Stream<QuerySnapshot> listen(CollectionReference ref) => _dataProvider.listen(ref);
 
   Stream<FirebaseUser> listenUserState() => _authProvider.listenUserState();
+
+  Future<AuthResult> signinAnonymously() => _authProvider.signinAnonymously();
 }
