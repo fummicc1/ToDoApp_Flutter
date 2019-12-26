@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:today_do/bloc/home_bloc.dart';
 import 'package:today_do/bloc/todo_list_bloc.dart';
-import 'package:today_do/ui/todo_list_page.dart';
+import 'package:today_do/ui/component/todo_list_component.dart';
 import 'package:today_do/model/user.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,7 +20,6 @@ class _HomePageState extends State<HomePage> {
       builder: (context, snapShot) {
         if (!snapShot.hasData) {
           bloc.signin();
-
           return Center(
             child: Text("インジケータ表示"),
           );
@@ -29,7 +28,7 @@ class _HomePageState extends State<HomePage> {
         return Provider<ToDoListBLoC>(
           create: (_) => ToDoListBLoC(),
           dispose: (_, bloc) => bloc.dispose(),
-          child: ToDoListPage(),
+          child: ToDoListComponent(),
         );
       },
     );

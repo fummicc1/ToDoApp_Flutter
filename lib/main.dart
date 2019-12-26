@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:today_do/ui/home_page.dart';
+import 'package:today_do/ui/page/create_todo_page.dart';
+import 'package:today_do/ui/page/home_page.dart';
 
 import 'bloc/home_bloc.dart';
-import 'ui/home_page.dart';
+import 'ui/page/home_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -24,6 +25,11 @@ class MyApp extends StatelessWidget {
                 title: Text("ToDoリスト"),
               ),
               body: HomePage(),
-            )));
+            )
+        ),
+      routes: {
+          "/create_todo": (context) => CreateToDoPage(),
+      },
+    );
   }
 }
