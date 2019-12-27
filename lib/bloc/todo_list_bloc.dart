@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:today_do/model/todo.dart';
 
 import 'base.dart';
@@ -9,6 +9,13 @@ class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
   StreamController<bool> _dialogFlagController = StreamController();
   Sink<bool> get dialogFlagSink => _dialogFlagController.sink;
   Stream<bool> get dialogFlagStream => _dialogFlagController.stream;
+
+  ToDoListBLoC() {
+    CollectionReference ref = Firestore.instance.collection(ToDoModel.collectionName);
+    Stream<ToDoListModel> stream = repository.listenCollection(ref).map((snapShot) => ToDoListModel(snapShot.documents.map((doc) => ToDoModel.fromJSON(doc.data))));
+
+    controller.addStream(stream);
+  }
 
   @override
   void dispose() {

@@ -18,12 +18,12 @@ class _HomePageState extends State<HomePage> {
     return StreamBuilder<UserModel>(
       stream: bloc.stream,
       builder: (context, snapShot) {
-        if (!snapShot.hasData) {
-          bloc.signin();
-          return Center(
-            child: Text("インジケータ表示"),
-          );
+        if (!snapShot.hasData) return  CircularProgressIndicator();
+
+        if (snapShot.hasData) {
+          bloc.sink.add(snapShot.data);
         }
+
         return Provider<ToDoListBLoC>(
           create: (_) => ToDoListBLoC(),
           dispose: (_, bloc) => bloc.dispose(),

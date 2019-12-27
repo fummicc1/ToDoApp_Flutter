@@ -11,7 +11,11 @@ class Repository {
 
   Future<void> create(BaseModel model) => _dataProvider.create(model.ref, model.json);
 
-  Stream<QuerySnapshot> listen(CollectionReference ref) => _dataProvider.listen(ref);
+  Future<DocumentSnapshot> getDocument(DocumentReference ref) => _dataProvider.getDocument(ref);
+
+  Stream<DocumentSnapshot> listenDocument(DocumentReference ref) => _dataProvider.listenDocument(ref);
+
+  Stream<QuerySnapshot> listenCollection(CollectionReference ref) => _dataProvider.listenCollection(ref);
 
   Stream<FirebaseUser> listenUserState() => _authProvider.listenUserState();
 

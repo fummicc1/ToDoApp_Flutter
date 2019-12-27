@@ -6,6 +6,6 @@ class FirebaseAuthProvider {
 
   Future<void> deleteUser(FirebaseUser user) => user.delete();
 
-  Future<void> signinAnonymously() => FirebaseAuth.instance.signInAnonymously();
+  Future<AuthResult> signinAnonymously() => FirebaseAuth.instance.signInAnonymously();
 
 }

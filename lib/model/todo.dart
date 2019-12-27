@@ -4,12 +4,14 @@ import 'package:today_do/model/base.dart';
 
 class ToDoModel with BaseModel {
 
+  static const String collectionName = "todos";
+
   String todo;
   DateTime deadline;
   DocumentReference sender;
 
   ToDoModel(String todo, DateTime deadline) {
-    this.ref = Firestore.instance.collection("todo").document();
+    this.ref = Firestore.instance.collection(ToDoModel.collectionName).document();
     this.todo = todo;
     this.deadline = deadline;
   }
@@ -36,13 +38,7 @@ class ToDoModel with BaseModel {
 class ToDoListModel with BaseModel {
   List<ToDoModel> value;
 
-  ToDoListModel.fromJSON(Map<String, dynamic> json) {
-    var _json = json["todo_list"];
-
-    if (_json is List<Map<String, dynamic>>) {
-       value = (_json as List<Map<String, dynamic>>).map((json) => ToDoModel.fromJSON(json));
-    }
-  }
+  ToDoListModel(this.value);
 
   @override
   // TODO: implement json
