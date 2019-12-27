@@ -14,12 +14,7 @@ class _CreateToDoPageState extends State<CreateToDoPage> {
     return Provider<CreateToDoBLoC>(
       create: (_) => CreateToDoBLoC(),
       dispose: (_, bloc) => bloc.dispose(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("ToDo作成"),
-        ),
-        body: CreateToDoComponent(),
-      ),
+      child: CreateToDoComponent(),
     );
   }
 }

@@ -24,7 +24,6 @@ class _HomePageState extends State<HomePage> {
             child: Text("インジケータ表示"),
           );
         }
-
         return Provider<ToDoListBLoC>(
           create: (_) => ToDoListBLoC(),
           dispose: (_, bloc) => bloc.dispose(),

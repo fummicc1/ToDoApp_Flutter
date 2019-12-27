@@ -15,45 +15,75 @@ class _ToDoListComponentState extends State<ToDoListComponent> {
 
     return StreamBuilder<ToDoListModel>(
       stream: bloc.stream,
-      builder: (context, snapShot) {
-        if (!snapShot.hasData) {
-          return AlertDialog(
-            title: Text("ToDoが見つかりませんでした。"),
-            content: Text("新しく作成してみませんか？"),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(
-                  "新しく作成",
-                  style: TextStyle(color: Colors.black),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pushNamed("/create_todo");
-                },
-              ),
-              FlatButton(
-                child: Text(
-                  "キャンセル",
-                  style: TextStyle(color: Colors.black),
-                ),
-                onPressed: () {},
-              )
-            ],
-          );
-        }
+      builder: (context, todoListSnapShot) {
+        return StreamBuilder<bool>(
+          initialData: true,
+          stream: bloc.dialogFlagStream,
+          builder: (context, dialogFlagSnapShot) {
+            if (!todoListSnapShot.hasData) {
+              if (!dialogFlagSnapShot.data)
+                return Container(
+                    padding: EdgeInsets.all(32),
+                    child: Center(
+                      child: RaisedButton(
+                        color: Colors.white,
+                          shape: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            "ToDoを作成",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                       onPressed: () {
+                         Navigator.of(context).pushNamed("/create_todo");
+                       },
+                      ),
+                    ));
 
-        return ListView.builder(
-          itemCount: snapShot.data.value.length,
-          itemBuilder: (context, index) {
-            var todo = snapShot.data.value[index];
+              return AlertDialog(
+                title: Text("ToDoが見つかりませんでした。"),
+                content: Text("新しく作成してみませんか？"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(
+                      "新しく作成",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed("/create_todo");
+                    },
+                  ),
+                  FlatButton(
+                    child: Text(
+                      "キャンセル",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    onPressed: () {
+                      bloc.dialogFlagSink.add(false);
+                    },
+                  )
+                ],
+              );
+            }
 
-            return ListTile(
-              title: Text(
-                todo.todo,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
+            return ListView.builder(
+              itemCount: todoListSnapShot.data.value.length,
+              itemBuilder: (context, index) {
+                var todo = todoListSnapShot.data.value[index];
+
+                return ListTile(
+                  title: Text(
+                    todo.todo,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                );
+              },
             );
           },
         );

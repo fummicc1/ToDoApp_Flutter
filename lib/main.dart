@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:today_do/ui/page/create_todo_page.dart';
@@ -9,27 +11,31 @@ import 'ui/page/home_page.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.amber,
-        ),
-        home: Provider<HomeBLoC>(
+        theme:
+            ThemeData(canvasColor: Colors.white, primarySwatch: Colors.amber),
+        home: Scaffold(
+          appBar: AppBar(
+            title: Text("ToDoリスト"),
+          ),
+          body: Provider<HomeBLoC>(
             create: (_) => HomeBLoC(),
             dispose: (_, bloc) => bloc.dispose(),
-            child: Scaffold(
-              appBar: AppBar(
-                title: Text("ToDoリスト"),
-              ),
-              body: HomePage(),
-            )
+            child: HomePage(),
+          ),
         ),
-      routes: {
-          "/create_todo": (context) => CreateToDoPage(),
-      },
-    );
+        routes: {
+          "/create_todo": (context) {
+            return Scaffold(
+              appBar: AppBar(
+                title: Text("ToDo作成"),
+              ),
+              body: CreateToDoPage(),
+            );
+          },
+        });
   }
 }
