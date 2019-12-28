@@ -5,7 +5,7 @@ import 'package:today_do/repository/repository.dart';
 
 // BLoC
 // V: Output, A: Input
-mixin BaseBLoC<V extends BaseModel, A> {
+mixin BaseBLoC<V, A> {
 
   @protected Repository repository = Repository();
 

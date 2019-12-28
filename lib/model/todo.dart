@@ -16,15 +16,19 @@ class ToDoModel with BaseModel {
     this.deadline = deadline;
   }
 
-  ToDoModel.fromJSON(Map<String, dynamic> json) {
-    todo = json["todo"];
-    var _deadline = json["deadline"];
+  ToDoModel.fromJson(Map<String, dynamic> json) {
 
-    if (_deadline is Timestamp) {
-      deadline = _deadline.toDate();
+    print("json: $json");
+
+    todo = json["todo"];
+
+    if (json["deadline"] is Timestamp) {
+      deadline = json["deadline"].toDate();
     }
 
-
+    if (json["ref"] is DocumentReference) {
+      ref = json["ref"];
+    }
   }
 
   @override

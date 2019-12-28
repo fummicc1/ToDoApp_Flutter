@@ -5,12 +5,12 @@ import 'package:today_do/bloc/todo_list_bloc.dart';
 import 'package:today_do/ui/component/todo_list_component.dart';
 import 'package:today_do/model/user.dart';
 
-class HomePage extends StatefulWidget {
+class ToDoListPage extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _ToDoListPageState createState() => _ToDoListPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _ToDoListPageState extends State<ToDoListPage> {
   @override
   Widget build(BuildContext context) {
     var bloc = Provider.of<HomeBLoC>(context);

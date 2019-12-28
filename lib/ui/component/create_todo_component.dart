@@ -9,38 +9,71 @@ class CreateToDoComponent extends StatefulWidget {
 }
 
 class _CreateToDoComponentState extends State<CreateToDoComponent> {
-
   @override
   Widget build(BuildContext context) {
-
     var bloc = Provider.of<CreateToDoBLoC>(context);
 
-    return Container(
-      margin: EdgeInsets.all(16),
-      child: TextField(
-        decoration: InputDecoration(
-          labelText: "今日やることを決めましょう",
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24),
-          )
-        ),
-        onSubmitted: (text) {
-          showDialog(context: context, builder: (_) {
-            return AlertDialog(
-              title: Text("この内容で保存しますか？"),
-              content: Text(text),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("OK"),
-                  onPressed: () {
-                    bloc.baseSink.add(text);
-                  },
-                )
-              ],
-            );
+    return StreamBuilder<bool>(
+      stream: bloc.baseStream,
+      builder: (context, snapShot) {
+
+        if (snapShot.hasError) {
+          SnackBar snackBar = SnackBar(
+            content: Text("ToDoを保存することができませんでした。お手数ですがもう一度お試しください。"),
+            action: SnackBarAction(label: "リトライ", onPressed: () {
+              bloc.baseSink.add(null);
+            }),
+          );
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Scaffold.of(context)..hideCurrentSnackBar()..showSnackBar(snackBar);
           });
-        },
-      ),
+        }
+
+        if (snapShot.hasData && snapShot.data) {
+
+          SnackBar snackBar = SnackBar(
+            content: Text("ToDoを保存しました！"),
+            action: SnackBarAction(label: "リスト画面へ", onPressed: () {
+              Navigator.of(context).pop();
+            }),
+          );
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Scaffold.of(context)..hideCurrentSnackBar()..showSnackBar(snackBar);
+          });
+        }
+
+        return Container(
+          margin: EdgeInsets.all(16),
+          child: TextField(
+            decoration: InputDecoration(
+                labelText: "今日やることを決めましょう",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                )),
+            onSubmitted: (text) {
+              showDialog(
+                  context: context,
+                  builder: (_) {
+                    return AlertDialog(
+                      title: Text("この内容で保存しますか？"),
+                      content: Text(text),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text("OK"),
+                          onPressed: () {
+                            bloc.baseSink.add(text);
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    );
+                  });
+            },
+          ),
+        );
+
+      },
     );
   }
 }

@@ -1,16 +1,15 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:today_do/ui/page/create_todo_page.dart';
-import 'package:today_do/ui/page/home_page.dart';
+import 'package:today_do/ui/page/todo_list_page.dart';
 
 import 'bloc/home_bloc.dart';
-import 'ui/page/home_page.dart';
+import 'ui/page/todo_list_page.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,7 +23,7 @@ class MyApp extends StatelessWidget {
           body: Provider<HomeBLoC>(
             create: (_) => HomeBLoC(),
             dispose: (_, bloc) => bloc.dispose(),
-            child: HomePage(),
+            child: ToDoListPage(),
           ),
         ),
         routes: {

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:today_do/model/todo.dart';
 
 import 'base.dart';
@@ -13,7 +12,20 @@ class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
 
   ToDoListBLoC() {
     CollectionReference ref = Firestore.instance.collection(ToDoModel.collectionName);
-    Stream<ToDoListModel> stream = repository.listenCollection(ref).map((snapShot) => ToDoListModel(snapShot.documents.map((doc) => ToDoModel.fromJSON(doc.data))));
+    Stream<ToDoListModel> stream = repository.listenCollection(ref).map((snapShot) {
+      print("snapShot.documents: ${snapShot.documents.map((doc) => doc.data)}");
+
+      ToDoListModel list = ToDoListModel([]);
+
+      for (int i = 0; i < snapShot.documents.length; i++) {
+        var data = snapShot.documents[i].data;
+
+        list.value.add(ToDoModel.fromJson(data));
+      }
+
+      print("List: $list");
+      return list;
+    });
 
     controller.addStream(stream);
   }

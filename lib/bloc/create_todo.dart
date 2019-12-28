@@ -3,12 +3,22 @@ import 'dart:async';
 import '../model/todo.dart';
 import 'base.dart';
 
-class CreateToDoBLoC with BaseBLoC<ToDoModel, String> {
+class CreateToDoBLoC with BaseBLoC<bool, String> {
+
+  String _textBuffer;
 
   CreateToDoBLoC() {
     actionController.stream.listen((text) {
-      ToDoModel todo = _createToDo(text);
-      repository.create(todo);
+
+      if (text != null && text.isNotEmpty) {
+        _textBuffer = text;
+      }
+      ToDoModel todo = _createToDo(_textBuffer);
+      repository.create(todo).catchError((error) {
+        controller.addError(error);
+      }).then((_) {
+        controller.add(true);
+      });
     });
   }
 
@@ -20,7 +30,6 @@ class CreateToDoBLoC with BaseBLoC<ToDoModel, String> {
     int month = currentDate.month;
     int day = currentDate.day;
 
-    // February
     if (month == 2) {
       if (isLeapYear(year)) {
         if (day == 28) {
@@ -45,6 +54,8 @@ class CreateToDoBLoC with BaseBLoC<ToDoModel, String> {
     } else if (day == 30 && [2, 4, 6, 9, 11].contains(month)) {
       month++;
       day = 1;
+    } else {
+      day++;
     }
     DateTime tomorrow = DateTime(year, month, day);
     return ToDoModel(text, tomorrow);

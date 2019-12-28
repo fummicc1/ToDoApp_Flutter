@@ -19,6 +19,7 @@ class UserModel with BaseModel {
   }
 
   UserModel.fromJSON(Map<String, dynamic> json) {
+
     uid = json["uid"];
     var _loginDate = json["login_date"];
     if (_loginDate is Timestamp) {
