@@ -14,7 +14,7 @@ class _ToDoListComponentState extends State<ToDoListComponent> {
     var bloc = Provider.of<ToDoListBLoC>(context);
 
     return StreamBuilder<ToDoListModel>(
-      stream: bloc.stream,
+      stream: bloc.baseStream,
       builder: (context, todoListSnapShot) {
         return StreamBuilder<bool>(
           initialData: true,

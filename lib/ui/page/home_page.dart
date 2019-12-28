@@ -16,12 +16,12 @@ class _HomePageState extends State<HomePage> {
     var bloc = Provider.of<HomeBLoC>(context);
 
     return StreamBuilder<UserModel>(
-      stream: bloc.stream,
+      stream: bloc.baseStream,
       builder: (context, snapShot) {
         if (!snapShot.hasData) return  CircularProgressIndicator();
 
         if (snapShot.hasData) {
-          bloc.sink.add(snapShot.data);
+          bloc.baseSink.add(snapShot.data);
         }
 
         return Provider<ToDoListBLoC>(

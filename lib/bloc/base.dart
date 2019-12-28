@@ -3,16 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:today_do/model/base.dart';
 import 'package:today_do/repository/repository.dart';
 
-// ビジネスロジックコンポーネント
+// BLoC
+// V: Output, A: Input
 mixin BaseBLoC<V extends BaseModel, A> {
 
   @protected Repository repository = Repository();
 
   @protected StreamController<V> controller = StreamController<V>();
-  Stream<V> get stream => controller.stream;
+  Stream<V> get baseStream => controller.stream;
 
   @protected StreamController<A> actionController = StreamController<A>();
-  Sink<A> get sink => actionController.sink;
+  Sink<A> get baseSink => actionController.sink;
 
   void dispose() {
     controller.close();
