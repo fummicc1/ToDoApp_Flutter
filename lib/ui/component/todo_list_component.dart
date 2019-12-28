@@ -11,7 +11,7 @@ class ToDoListComponent extends StatefulWidget {
 class _ToDoListComponentState extends State<ToDoListComponent> {
   @override
   Widget build(BuildContext context) {
-    var bloc = Provider.of<ToDoListBLoC>(context);
+    final bloc = Provider.of<ToDoListBLoC>(context);
 
     return StreamBuilder<ToDoListModel>(
       stream: bloc.baseStream,
@@ -27,19 +27,19 @@ class _ToDoListComponentState extends State<ToDoListComponent> {
                     child: Center(
                       child: RaisedButton(
                         color: Colors.white,
-                          shape: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
+                        shape: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          "ToDoを作成",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
-                          child: Text(
-                            "ToDoを作成",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                       onPressed: () {
-                         Navigator.of(context).pushNamed("/create_todo");
-                       },
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed("/create_todo");
+                        },
                       ),
                     ));
 
@@ -74,7 +74,8 @@ class _ToDoListComponentState extends State<ToDoListComponent> {
               itemBuilder: (context, index) {
                 var todo = todoListSnapShot.data.value[index];
 
-                return ListTile(
+                return CheckboxListTile(
+                  value: false,
                   title: Text(
                     todo.todo,
                     style: TextStyle(
@@ -82,6 +83,10 @@ class _ToDoListComponentState extends State<ToDoListComponent> {
                       fontSize: 20,
                     ),
                   ),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  onChanged: (value) {
+
+                  },
                 );
               },
             );
