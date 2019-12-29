@@ -7,7 +7,6 @@ import 'package:today_do/model/user.dart';
 import 'base.dart';
 
 class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
-
   final StreamController<UserModel> _userController = BehaviorSubject();
   Stream<UserModel> get userStream => _userController.stream;
   Sink<UserModel> get userSink => _userController.sink;
@@ -21,31 +20,46 @@ class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
   Stream<bool> get dialogFlagStream => _dialogFlagController.stream;
 
   ToDoListBLoC() {
-
     Stream<UserModel> _userStream = repository.listenUserState();
 
     userStream.listen((user) {
-      if (user == null) repository.signinAnonymously();
+      if (user == null)
+        repository.signinAnonymously();
+      else {
+        Query query = Firestore.instance
+            .collection(ToDoModel.collectionName)
+            .where(
+                "sender",
+                isEqualTo: Firestore.instance
+                    .collection(UserModel.collectionName)
+                    .document(user.uid));
+
+        if (baseController.hasListener) baseController.close();
+
+        var _baseStream = repository.listenQuery(query).map((snapShot) {
+
+          if (snapShot.documents.isEmpty) {
+             dialogFlagSink.add(true);
+             return [];
+          } else {
+            dialogFlagSink.add(false);
+          }
+
+          ToDoListModel list = ToDoListModel([]);
+
+          for (int i = 0; i < snapShot.documents.length; i++) {
+            var data = snapShot.documents[i].data;
+
+            list.value.add(ToDoModel.fromJson(data));
+          }
+          return list;
+        });
+
+        baseController.addStream(_baseStream);
+      }
     });
 
     _userController.addStream(_userStream);
-
-    CollectionReference ref = Firestore.instance.collection(ToDoModel.collectionName);
-    Stream<ToDoListModel> stream = repository.listenCollection(ref).map((snapShot) {
-
-      if (snapShot.documents.isNotEmpty) dialogFlagSink.add(false);
-
-      ToDoListModel list = ToDoListModel([]);
-
-      for (int i = 0; i < snapShot.documents.length; i++) {
-        var data = snapShot.documents[i].data;
-
-        list.value.add(ToDoModel.fromJson(data));
-      }
-      return list;
-    });
-
-    baseController.addStream(stream);
 
     userPersistStream.listen((user) {
       user.loginDate = DateTime.now();
@@ -60,5 +74,4 @@ class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
     _userController?.close();
     _userPersistController?.close();
   }
-
 }

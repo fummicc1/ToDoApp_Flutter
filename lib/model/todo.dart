@@ -30,13 +30,18 @@ class ToDoModel with BaseModel {
     if (json["ref"] is DocumentReference) {
       ref = json["ref"];
     }
+
+    if (json["sender"] is DocumentReference) {
+      sender = json["sender"];
+    }
   }
 
   @override
   Map<String, dynamic> get json => {
     "todo": todo,
     "deadline": deadline,
-    "ref": ref
+    "ref": ref,
+    "sender": sender
   };
 }
 

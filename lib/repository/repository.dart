@@ -21,6 +21,9 @@ class Repository {
   Stream<QuerySnapshot> listenCollection(CollectionReference ref) =>
       _dataProvider.listenCollection(ref);
 
+  Stream<QuerySnapshot> listenQuery(Query query) => _dataProvider.listenQuery(query);
+  Future<QuerySnapshot> getQuery(Query query) => _dataProvider.getQuery(query);
+
   Stream<UserModel> listenUserState() => _authProvider.listenUserState().map(
       (firebaseUser) => firebaseUser == null ? null : UserModel(firebaseUser));
 

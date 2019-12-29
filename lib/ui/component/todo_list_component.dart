@@ -21,7 +21,7 @@ class _ToDoListComponentState extends State<ToDoListComponent> {
           stream: bloc.dialogFlagStream,
           builder: (context, dialogFlagSnapShot) {
             if (!todoListSnapShot.hasData) {
-              if (dialogFlagSnapShot.hasData && !dialogFlagSnapShot.data)
+              if (!dialogFlagSnapShot.data)
                 return Container(
                     padding: EdgeInsets.all(32),
                     child: Center(
@@ -42,54 +42,51 @@ class _ToDoListComponentState extends State<ToDoListComponent> {
                         },
                       ),
                     ));
-
-              return AlertDialog(
-                title: Text("ToDoが見つかりませんでした。"),
-                content: Text("新しく作成してみませんか？"),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text(
-                      "新しく作成",
-                      style: TextStyle(color: Colors.black),
+              else
+                return AlertDialog(
+                  title: Text("ToDoが見つかりませんでした。"),
+                  content: Text("新しく作成してみませんか？"),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(
+                        "新しく作成",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pushNamed("/create_todo");
+                      },
                     ),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed("/create_todo");
-                    },
-                  ),
-                  FlatButton(
-                    child: Text(
-                      "キャンセル",
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    onPressed: () {
-                      bloc.dialogFlagSink.add(false);
-                    },
-                  )
-                ],
-              );
-            }
-
-            return ListView.builder(
-              itemCount: todoListSnapShot.data.value.length,
-              itemBuilder: (context, index) {
-                var todo = todoListSnapShot.data.value[index];
-
-                return CheckboxListTile(
-                  value: false,
-                  title: Text(
-                    todo.todo,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  ),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  onChanged: (value) {
-
-                  },
+                    FlatButton(
+                      child: Text(
+                        "キャンセル",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onPressed: () {
+                        bloc.dialogFlagSink.add(false);
+                      },
+                    )
+                  ],
                 );
-              },
-            );
+            } else
+              return ListView.builder(
+                itemCount: todoListSnapShot.data.value.length,
+                itemBuilder: (context, index) {
+                  var todo = todoListSnapShot.data.value[index];
+
+                  return CheckboxListTile(
+                    value: false,
+                    title: Text(
+                      todo.todo,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    onChanged: (value) {},
+                  );
+                },
+              );
           },
         );
       },
