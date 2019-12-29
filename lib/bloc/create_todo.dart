@@ -21,16 +21,16 @@ class CreateToDoBLoC with BaseBLoC<UploadStatus, String> {
   CreateToDoBLoC() {
     actionController.stream.listen((text) {
 
-      controller.add(UploadStatus.Uploading);
+      baseController.add(UploadStatus.Uploading);
 
       if (text != null && text.isNotEmpty) {
         _textBuffer = text;
       }
       ToDoModel todo = _createToDo(_textBuffer, _userRef);
       repository.create(todo).catchError((error) {
-        controller.addError(error);
+        baseController.addError(error);
       }).then((_) {
-        controller.add(UploadStatus.Done);
+        baseController.add(UploadStatus.Done);
       });
     });
 
@@ -75,7 +75,7 @@ class CreateToDoBLoC with BaseBLoC<UploadStatus, String> {
       day++;
     }
     DateTime tomorrow = DateTime(year, month, day);
-    return ToDoModel(text, tomorrow);
+    return ToDoModel(text, tomorrow, ref);
   }
 
   bool isLeapYear(int year) {
