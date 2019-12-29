@@ -16,77 +16,45 @@ class _ToDoListComponentState extends State<ToDoListComponent> {
     return StreamBuilder<ToDoListModel>(
       stream: bloc.baseStream,
       builder: (context, todoListSnapShot) {
-        return StreamBuilder<bool>(
-          initialData: true,
-          stream: bloc.dialogFlagStream,
-          builder: (context, dialogFlagSnapShot) {
-            if (!todoListSnapShot.hasData) {
-              if (!dialogFlagSnapShot.data)
-                return Container(
-                    padding: EdgeInsets.all(32),
-                    child: Center(
-                      child: RaisedButton(
-                        color: Colors.white,
-                        shape: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          "ToDoを作成",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pushNamed("/create_todo");
-                        },
-                      ),
-                    ));
-              else
-                return AlertDialog(
-                  title: Text("ToDoが見つかりませんでした。"),
-                  content: Text("新しく作成してみませんか？"),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        "新しく作成",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pushNamed("/create_todo");
-                      },
+        if (!todoListSnapShot.hasData)
+          return Container(
+              padding: EdgeInsets.all(32),
+              child: Center(
+                child: RaisedButton(
+                  color: Colors.white,
+                  shape: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    "ToDoを作成",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
-                    FlatButton(
-                      child: Text(
-                        "キャンセル",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      onPressed: () {
-                        bloc.dialogFlagSink.add(false);
-                      },
-                    )
-                  ],
-                );
-            } else
-              return ListView.builder(
-                itemCount: todoListSnapShot.data.value.length,
-                itemBuilder: (context, index) {
-                  var todo = todoListSnapShot.data.value[index];
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed("/create_todo");
+                  },
+                ),
+              ));
 
-                  return CheckboxListTile(
-                    value: false,
-                    title: Text(
-                      todo.todo,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                    ),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    onChanged: (value) {},
-                  );
-                },
-              );
+        return ListView.builder(
+          itemCount: todoListSnapShot.data.value.length,
+          itemBuilder: (context, index) {
+            var todo = todoListSnapShot.data.value[index];
+
+            return CheckboxListTile(
+              value: false,
+              title: Text(
+                todo.todo,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+              controlAffinity: ListTileControlAffinity.leading,
+              onChanged: (value) {},
+            );
           },
         );
       },

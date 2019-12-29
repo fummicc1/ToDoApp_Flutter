@@ -51,15 +51,15 @@ class _CreateToDoComponentState extends State<CreateToDoComponent> {
                             content: Text(text),
                             actions: <Widget>[
                               FlatButton(
-                                child: Text("保存する"),
+                                child: Text("キャンセル"),
                                 onPressed: () {
-                                  bloc.baseSink.add(text);
                                   Navigator.of(context).pop();
                                 },
                               ),
                               FlatButton(
-                                child: Text("キャンセル"),
+                                child: Text("保存する"),
                                 onPressed: () {
+                                  bloc.baseSink.add(text);
                                   Navigator.of(context).pop();
                                 },
                               ),

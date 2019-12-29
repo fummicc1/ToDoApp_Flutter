@@ -15,10 +15,6 @@ class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
   Stream<UserModel> get userPersistStream => _userPersistController.stream;
   Sink<UserModel> get userPersistSink => _userPersistController.sink;
 
-  StreamController<bool> _dialogFlagController = BehaviorSubject.seeded(true);
-  Sink<bool> get dialogFlagSink => _dialogFlagController.sink;
-  Stream<bool> get dialogFlagStream => _dialogFlagController.stream;
-
   ToDoListBLoC() {
     Stream<UserModel> _userStream = repository.listenUserState();
 
@@ -38,12 +34,7 @@ class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
 
         var _baseStream = repository.listenQuery(query).map((snapShot) {
 
-          if (snapShot.documents.isEmpty) {
-             dialogFlagSink.add(true);
-             return [];
-          } else {
-            dialogFlagSink.add(false);
-          }
+          if (snapShot.documents.isEmpty) return null;
 
           ToDoListModel list = ToDoListModel([]);
 
@@ -70,7 +61,6 @@ class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
   @override
   void dispose() {
     super.dispose();
-    _dialogFlagController?.close();
     _userController?.close();
     _userPersistController?.close();
   }

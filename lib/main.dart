@@ -26,10 +26,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("ToDoリスト"),
+        title: Text(
+          "ToDayDo",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 40,
+          ),
+        ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.add),
+            padding: EdgeInsets.only(right: 16),
+            icon: Icon(Icons.add_circle),
+            iconSize: 32,
             onPressed: () {
               Navigator.of(context).pushNamed("/create_todo");
             },
