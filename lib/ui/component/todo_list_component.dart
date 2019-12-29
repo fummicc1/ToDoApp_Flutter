@@ -21,7 +21,7 @@ class _ToDoListComponentState extends State<ToDoListComponent> {
           stream: bloc.dialogFlagStream,
           builder: (context, dialogFlagSnapShot) {
             if (!todoListSnapShot.hasData) {
-              if (!dialogFlagSnapShot.data)
+              if (dialogFlagSnapShot.hasData && !dialogFlagSnapShot.data)
                 return Container(
                     padding: EdgeInsets.all(32),
                     child: Center(

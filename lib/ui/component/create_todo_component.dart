@@ -54,6 +54,7 @@ class _CreateToDoComponentState extends State<CreateToDoComponent> {
             onSubmitted: (text) {
               showDialog(
                   context: context,
+                  barrierDismissible: false,
                   builder: (_) {
                     return AlertDialog(
                       title: Text("この内容で保存しますか？"),
@@ -63,7 +64,7 @@ class _CreateToDoComponentState extends State<CreateToDoComponent> {
                           child: Text("OK"),
                           onPressed: () {
                             bloc.baseSink.add(text);
-                            Navigator.of(context).pop();
+                            bloc.isUploadingToDoSink.add(true);
                           },
                         )
                       ],

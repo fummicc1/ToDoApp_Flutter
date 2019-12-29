@@ -6,14 +6,15 @@ import 'base.dart';
 
 class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
 
-  StreamController<bool> _dialogFlagController = StreamController();
+  StreamController<bool> _dialogFlagController = StreamController.broadcast();
   Sink<bool> get dialogFlagSink => _dialogFlagController.sink;
   Stream<bool> get dialogFlagStream => _dialogFlagController.stream;
 
   ToDoListBLoC() {
     CollectionReference ref = Firestore.instance.collection(ToDoModel.collectionName);
     Stream<ToDoListModel> stream = repository.listenCollection(ref).map((snapShot) {
-      print("snapShot.documents: ${snapShot.documents.map((doc) => doc.data)}");
+
+      if (snapShot.documents.isNotEmpty) dialogFlagSink.add(false);
 
       ToDoListModel list = ToDoListModel([]);
 

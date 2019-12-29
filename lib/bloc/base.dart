@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:today_do/model/base.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:today_do/repository/repository.dart';
 
 // BLoC
@@ -9,7 +9,7 @@ mixin BaseBLoC<V, A> {
 
   @protected Repository repository = Repository();
 
-  @protected StreamController<V> controller = StreamController<V>();
+  @protected StreamController<V> controller = BehaviorSubject<V>();
   Stream<V> get baseStream => controller.stream;
 
   @protected StreamController<A> actionController = StreamController<A>();

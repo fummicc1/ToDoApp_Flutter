@@ -1,11 +1,26 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:today_do/model/user.dart';
+
 import '../model/todo.dart';
 import 'base.dart';
 
+enum UploadStatus {
+  case idol
+case uploading,
+case done,
+}
+
 class CreateToDoBLoC with BaseBLoC<bool, String> {
 
+  StreamController<bool> _isUploadingToDo = StreamController();
+  Stream<bool> get isUploadingToDoStream => _isUploadingToDo.stream;
+  Sink<bool> get isUploadingToDoSink => _isUploadingToDo.sink;
+
   String _textBuffer;
+  DocumentReference _userRef;
 
   CreateToDoBLoC() {
     actionController.stream.listen((text) {
@@ -13,16 +28,20 @@ class CreateToDoBLoC with BaseBLoC<bool, String> {
       if (text != null && text.isNotEmpty) {
         _textBuffer = text;
       }
-      ToDoModel todo = _createToDo(_textBuffer);
+      ToDoModel todo = _createToDo(_textBuffer, _userRef);
       repository.create(todo).catchError((error) {
         controller.addError(error);
       }).then((_) {
         controller.add(true);
       });
     });
+
+    FirebaseAuth.instance.currentUser()
+        .then((user) => user.uid)
+    .then((uid) => _userRef = Firestore.instance.collection(UserModel.collectionName).document(uid));
   }
 
-  ToDoModel _createToDo(String text) {
+  ToDoModel _createToDo(String text, DocumentReference ref) {
 
     DateTime currentDate = DateTime.now();
 

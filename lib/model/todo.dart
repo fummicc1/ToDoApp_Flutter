@@ -10,10 +10,11 @@ class ToDoModel with BaseModel {
   DateTime deadline;
   DocumentReference sender;
 
-  ToDoModel(String todo, DateTime deadline) {
+  ToDoModel(String todo, DateTime deadline, {DocumentReference sender}) {
     this.ref = Firestore.instance.collection(ToDoModel.collectionName).document();
     this.todo = todo;
     this.deadline = deadline;
+    this.sender = sender;
   }
 
   ToDoModel.fromJson(Map<String, dynamic> json) {

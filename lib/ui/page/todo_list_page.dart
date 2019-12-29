@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:today_do/bloc/app_bloc.dart';
 import 'package:today_do/bloc/home_bloc.dart';
 import 'package:today_do/bloc/todo_list_bloc.dart';
 import 'package:today_do/ui/component/todo_list_component.dart';
@@ -14,6 +15,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
   @override
   Widget build(BuildContext context) {
     var bloc = Provider.of<HomeBLoC>(context);
+    final appBLoC = Provider.of<AppBLoC>(context);
 
     return StreamBuilder<UserModel>(
       stream: bloc.baseStream,
@@ -25,7 +27,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
         }
 
         return Provider<ToDoListBLoC>(
-          create: (_) => ToDoListBLoC(),
+          create: (_) => appBLoC.toDoListBLoC,
           dispose: (_, bloc) => bloc.dispose(),
           child: ToDoListComponent(),
         );
