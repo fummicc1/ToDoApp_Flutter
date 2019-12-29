@@ -1,28 +1,45 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:today_do/model/user.dart';
+
 import '../model/todo.dart';
 import 'base.dart';
 
-class CreateToDoBLoC with BaseBLoC<bool, String> {
+enum UploadStatus {
+  Idle,
+  Uploading,
+  Done,
+}
+
+class CreateToDoBLoC with BaseBLoC<UploadStatus, String> {
 
   String _textBuffer;
+  DocumentReference _userRef;
 
   CreateToDoBLoC() {
     actionController.stream.listen((text) {
 
+      baseController.add(UploadStatus.Uploading);
+
       if (text != null && text.isNotEmpty) {
         _textBuffer = text;
       }
-      ToDoModel todo = _createToDo(_textBuffer);
+      ToDoModel todo = _createToDo(_textBuffer, _userRef);
       repository.create(todo).catchError((error) {
-        controller.addError(error);
+        baseController.addError(error);
       }).then((_) {
-        controller.add(true);
+        baseController.add(UploadStatus.Done);
       });
     });
+
+    FirebaseAuth.instance.currentUser()
+        .then((user) => user.uid)
+    .then((uid) => _userRef = Firestore.instance.collection(UserModel.collectionName).document(uid));
   }
 
-  ToDoModel _createToDo(String text) {
+  ToDoModel _createToDo(String text, DocumentReference ref) {
 
     DateTime currentDate = DateTime.now();
 
@@ -58,7 +75,7 @@ class CreateToDoBLoC with BaseBLoC<bool, String> {
       day++;
     }
     DateTime tomorrow = DateTime(year, month, day);
-    return ToDoModel(text, tomorrow);
+    return ToDoModel(text, tomorrow, ref);
   }
 
   bool isLeapYear(int year) {

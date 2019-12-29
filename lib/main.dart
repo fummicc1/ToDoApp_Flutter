@@ -1,40 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:today_do/bloc/todo_list_bloc.dart';
 import 'package:today_do/ui/page/create_todo_page.dart';
 import 'package:today_do/ui/page/todo_list_page.dart';
-
-import 'bloc/home_bloc.dart';
 import 'ui/page/todo_list_page.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(MaterialApp(
+      title: "ToDayDo",
+      theme: ThemeData(canvasColor: Colors.white, primarySwatch: Colors.amber),
+      home: MyApp(),
+      routes: {
+        "/create_todo": (context) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text("ToDo作成"),
+            ),
+            body: CreateToDoPage(),
+          );
+        },
+      },
+    ));
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        theme:
-            ThemeData(canvasColor: Colors.white, primarySwatch: Colors.amber),
-        home: Scaffold(
-          appBar: AppBar(
-            title: Text("ToDoリスト"),
-          ),
-          body: Provider<HomeBLoC>(
-            create: (_) => HomeBLoC(),
-            dispose: (_, bloc) => bloc.dispose(),
-            child: ToDoListPage(),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "ToDayDo",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 40,
           ),
         ),
-        routes: {
-          "/create_todo": (context) {
-            return Scaffold(
-              appBar: AppBar(
-                title: Text("ToDo作成"),
-              ),
-              body: CreateToDoPage(),
-            );
-          },
-        });
+        actions: <Widget>[
+          IconButton(
+            padding: EdgeInsets.only(right: 16),
+            icon: Icon(Icons.add_circle),
+            iconSize: 32,
+            onPressed: () {
+              Navigator.of(context).pushNamed("/create_todo");
+            },
+          ),
+        ],
+      ),
+      body: Provider<ToDoListBLoC>(
+        create: (_) => ToDoListBLoC(),
+        dispose: (_, bloc) => bloc.dispose(),
+        child: ToDoListPage(),
+      ),
+    );
   }
 }

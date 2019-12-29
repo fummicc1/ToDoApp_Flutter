@@ -1,39 +1,67 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:today_do/model/todo.dart';
+import 'package:today_do/model/user.dart';
 
 import 'base.dart';
 
 class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
+  final StreamController<UserModel> _userController = BehaviorSubject();
+  Stream<UserModel> get userStream => _userController.stream;
+  Sink<UserModel> get userSink => _userController.sink;
 
-  StreamController<bool> _dialogFlagController = StreamController();
-  Sink<bool> get dialogFlagSink => _dialogFlagController.sink;
-  Stream<bool> get dialogFlagStream => _dialogFlagController.stream;
+  StreamController<UserModel> _userPersistController = PublishSubject();
+  Stream<UserModel> get userPersistStream => _userPersistController.stream;
+  Sink<UserModel> get userPersistSink => _userPersistController.sink;
 
   ToDoListBLoC() {
-    CollectionReference ref = Firestore.instance.collection(ToDoModel.collectionName);
-    Stream<ToDoListModel> stream = repository.listenCollection(ref).map((snapShot) {
-      print("snapShot.documents: ${snapShot.documents.map((doc) => doc.data)}");
+    Stream<UserModel> _userStream = repository.listenUserState();
 
-      ToDoListModel list = ToDoListModel([]);
+    userStream.listen((user) {
+      if (user == null)
+        repository.signinAnonymously();
+      else {
+        Query query = Firestore.instance
+            .collection(ToDoModel.collectionName)
+            .where(
+                "sender",
+                isEqualTo: Firestore.instance
+                    .collection(UserModel.collectionName)
+                    .document(user.uid));
 
-      for (int i = 0; i < snapShot.documents.length; i++) {
-        var data = snapShot.documents[i].data;
+        if (baseController.hasListener) baseController.close();
 
-        list.value.add(ToDoModel.fromJson(data));
+        var _baseStream = repository.listenQuery(query).map((snapShot) {
+
+          if (snapShot.documents.isEmpty) return null;
+
+          ToDoListModel list = ToDoListModel([]);
+
+          for (int i = 0; i < snapShot.documents.length; i++) {
+            var data = snapShot.documents[i].data;
+
+            list.value.add(ToDoModel.fromJson(data));
+          }
+          return list;
+        });
+
+        baseController.addStream(_baseStream);
       }
-
-      print("List: $list");
-      return list;
     });
 
-    controller.addStream(stream);
+    _userController.addStream(_userStream);
+
+    userPersistStream.listen((user) {
+      user.loginDate = DateTime.now();
+      repository.create(user);
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
-    _dialogFlagController.close();
+    _userController?.close();
+    _userPersistController?.close();
   }
-
 }

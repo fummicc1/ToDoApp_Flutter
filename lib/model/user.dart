@@ -10,10 +10,6 @@ class UserModel with BaseModel {
   String uid;
   DateTime loginDate;
 
-  UserModel.empty() {
-    uid = "";
-  }
-
   UserModel(FirebaseUser firebaseUser) {
     this.uid = firebaseUser.uid;
   }
@@ -35,6 +31,4 @@ class UserModel with BaseModel {
 
   @override
   DocumentReference get ref => Firestore.instance.collection(UserModel.collectionName).document(uid);
-
-
 }
