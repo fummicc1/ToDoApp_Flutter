@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:today_do/bloc/create_todo.dart';
+import 'package:today_do/ui/component/decide_priority_component.dart';
 
 class CreateToDoComponent extends StatefulWidget {
   @override
@@ -34,40 +35,45 @@ class _CreateToDoComponentState extends State<CreateToDoComponent> {
 
           switch (snapShot.data){
             case UploadStatus.Idle:
-              return Container(
-                margin: EdgeInsets.all(16),
-                child: TextField(
-                  decoration: InputDecoration(
-                      labelText: "今日やることを決めましょう",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      )),
-                  onSubmitted: (text) {
-                    showDialog(
-                        context: context,
-                        builder: (_) {
-                          return AlertDialog(
-                            title: Text("この内容で保存しますか？"),
-                            content: Text(text),
-                            actions: <Widget>[
-                              FlatButton(
-                                child: Text("キャンセル"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              FlatButton(
-                                child: Text("保存する"),
-                                onPressed: () {
-                                  bloc.baseSink.add(text);
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        });
-                  },
-                ),
+              return Column(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.all(16),
+                    child: TextField(
+                      decoration: InputDecoration(
+                          labelText: "今日やることを決めましょう",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          )),
+                      onSubmitted: (text) {
+                        showDialog(
+                            context: context,
+                            builder: (_) {
+                              return AlertDialog(
+                                title: Text("この内容で保存しますか？"),
+                                content: Text(text),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text("キャンセル"),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  FlatButton(
+                                    child: Text("保存する"),
+                                    onPressed: () {
+                                      bloc.baseSink.add(text);
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                    ),
+                  ),
+                  DecidePriorityComponent(),
+                ],
               );
             case UploadStatus.Uploading:
               return Center(child: CircularProgressIndicator());

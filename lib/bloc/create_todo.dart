@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:today_do/model/user.dart';
 
 import '../model/todo.dart';
@@ -15,10 +16,35 @@ enum UploadStatus {
 
 class CreateToDoBLoC with BaseBLoC<UploadStatus, String> {
 
+  static const double sliderUnitConstant = 0.25;
+
   String _textBuffer;
   DocumentReference _userRef;
 
+  StreamController<double> _sliderActionController = BehaviorSubject();
+  Sink<double> get sliderActionSink => _sliderActionController.sink;
+
+  StreamController<double> _sliderValueController = BehaviorSubject();
+  Stream<double> get sliderValueStream => _sliderValueController.stream;
+
   CreateToDoBLoC() {
+
+    _sliderActionController.stream.listen((value) {
+      if (value >= 0 && value < 0.25) {
+        _sliderValueController.add(0);
+      } else if (value >= 0.25 && value < 0.5) {
+        _sliderValueController.add(0.25);
+      } else if (value >= 0.5 && value < 0.75) {
+        _sliderValueController.add(0.5);
+      } else if (value >= 0.75 && value < 1.0) {
+        _sliderValueController.add(0.75);
+      } else if (value >= 1.0) {
+        _sliderValueController.add(1.0);
+      } else if (value < 0) {
+        _sliderValueController.add(0);
+      }
+    });
+    
     actionController.stream.listen((text) {
 
       baseController.add(UploadStatus.Uploading);
