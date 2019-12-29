@@ -8,22 +8,20 @@ import '../model/todo.dart';
 import 'base.dart';
 
 enum UploadStatus {
-  case idol
-case uploading,
-case done,
+  Idle,
+  Uploading,
+  Done,
 }
 
-class CreateToDoBLoC with BaseBLoC<bool, String> {
-
-  StreamController<bool> _isUploadingToDo = StreamController();
-  Stream<bool> get isUploadingToDoStream => _isUploadingToDo.stream;
-  Sink<bool> get isUploadingToDoSink => _isUploadingToDo.sink;
+class CreateToDoBLoC with BaseBLoC<UploadStatus, String> {
 
   String _textBuffer;
   DocumentReference _userRef;
 
   CreateToDoBLoC() {
     actionController.stream.listen((text) {
+
+      controller.add(UploadStatus.Uploading);
 
       if (text != null && text.isNotEmpty) {
         _textBuffer = text;
@@ -32,7 +30,7 @@ class CreateToDoBLoC with BaseBLoC<bool, String> {
       repository.create(todo).catchError((error) {
         controller.addError(error);
       }).then((_) {
-        controller.add(true);
+        controller.add(UploadStatus.Done);
       });
     });
 

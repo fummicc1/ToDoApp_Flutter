@@ -9,7 +9,6 @@ class UserModel with BaseModel {
 
   String uid;
   DateTime loginDate;
-  List<DocumentReference> todoRefList;
 
   UserModel.empty() {
     uid = "";
@@ -26,14 +25,12 @@ class UserModel with BaseModel {
     if (_loginDate is Timestamp) {
       loginDate = _loginDate.toDate();
     }
-    todoRefList = json["todo_ref_list"];
   }
 
   @override
   Map<String, dynamic> get json => {
     "uid": uid,
     "login_date": loginDate,
-    "todo_ref_list": todoRefList,
   };
 
   @override

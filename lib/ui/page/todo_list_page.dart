@@ -20,7 +20,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
     return StreamBuilder<UserModel>(
       stream: bloc.baseStream,
       builder: (context, snapShot) {
-        if (!snapShot.hasData) return  CircularProgressIndicator();
+        if (!snapShot.hasData) return  Center(child: CircularProgressIndicator());
 
         if (snapShot.hasData) {
           bloc.baseSink.add(snapShot.data);
