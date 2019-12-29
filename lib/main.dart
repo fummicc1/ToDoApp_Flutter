@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:today_do/bloc/app_bloc.dart';
 import 'package:today_do/bloc/todo_list_bloc.dart';
 import 'package:today_do/ui/page/create_todo_page.dart';
 import 'package:today_do/ui/page/todo_list_page.dart';
@@ -8,7 +9,11 @@ import 'ui/page/todo_list_page.dart';
 void main() => runApp(MaterialApp(
       title: "ToDayDo",
       theme: ThemeData(canvasColor: Colors.white, primarySwatch: Colors.amber),
-      home: MyApp(),
+      home: Provider<AppBLoC>(
+        create: (_) => AppBLoC(),
+        dispose: (_, bloc) => bloc.dispose(),
+        child: MyApp(),
+      ),
       routes: {
         "/create_todo": (context) {
           return Scaffold(
@@ -30,7 +35,7 @@ class MyApp extends StatelessWidget {
           "ToDayDo",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 40,
+            fontSize: 24,
           ),
         ),
         actions: <Widget>[
