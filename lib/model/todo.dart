@@ -2,19 +2,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:today_do/model/base.dart';
 
+enum ToDoStatus {
+  ToDo,
+  Done,
+  Failed,
+}
+
 class ToDoModel with BaseModel {
 
   static const String collectionName = "todos";
 
   String todo;
   DateTime deadline;
+  bool isDone;
+
+  ToDoStatus get status {
+    final DateTime current = DateTime.now();
+    if (current.isAfter(deadline)) return isDone ? ToDoStatus.Done : ToDoStatus.Failed;
+    return ToDoStatus.ToDo;
+  }
+
   DocumentReference sender;
 
-  ToDoModel(String todo, DateTime deadline, [DocumentReference sender]) {
+  ToDoModel(String todo, DateTime deadline, {DocumentReference sender, bool isDone = false}) {
     this.ref = Firestore.instance.collection(ToDoModel.collectionName).document();
     this.todo = todo;
     this.deadline = deadline;
     this.sender = sender;
+    this.isDone = isDone;
   }
 
   ToDoModel.fromJson(Map<String, dynamic> json) {
@@ -22,6 +37,8 @@ class ToDoModel with BaseModel {
     print("json: $json");
 
     todo = json["todo"];
+
+    isDone = json["is_done"];
 
     if (json["deadline"] is Timestamp) {
       deadline = json["deadline"].toDate();
@@ -41,7 +58,8 @@ class ToDoModel with BaseModel {
     "todo": todo,
     "deadline": deadline,
     "ref": ref,
-    "sender": sender
+    "sender": sender,
+    "is_done": isDone,
   };
 }
 
@@ -51,7 +69,6 @@ class ToDoListModel with BaseModel {
   ToDoListModel(this.value);
 
   @override
-  // TODO: implement json
   Map<String, dynamic> get json => {
     "todo_list": value.map((todo) => todo.json)
   };

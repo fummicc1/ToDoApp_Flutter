@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_circular_slider/flutter_circular_slider.dart';
 import 'package:provider/provider.dart';
 import 'package:today_do/bloc/create_todo.dart';
-import 'package:today_do/ui/component/decide_priority_component.dart';
 
 class CreateToDoComponent extends StatefulWidget {
   @override
@@ -17,23 +17,25 @@ class _CreateToDoComponentState extends State<CreateToDoComponent> {
       stream: bloc.baseStream,
       initialData: UploadStatus.Idle,
       builder: (context, snapShot) {
-
         if (snapShot.hasError) {
           SnackBar snackBar = SnackBar(
             content: Text("ToDoを保存することができませんでした。お手数ですがもう一度お試しください。"),
-            action: SnackBarAction(label: "リトライ", onPressed: () {
-              bloc.baseSink.add(null);
-            }),
+            action: SnackBarAction(
+                label: "リトライ",
+                onPressed: () {
+                  bloc.baseSink.add(null);
+                }),
           );
 
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Scaffold.of(context)..hideCurrentSnackBar()..showSnackBar(snackBar);
+            Scaffold.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(snackBar);
           });
         }
 
         if (snapShot.hasData) {
-
-          switch (snapShot.data){
+          switch (snapShot.data) {
             case UploadStatus.Idle:
               return Column(
                 children: <Widget>[
@@ -72,7 +74,18 @@ class _CreateToDoComponentState extends State<CreateToDoComponent> {
                       },
                     ),
                   ),
-                  DecidePriorityComponent(),
+                  Center(
+                    child: SingleCircularSlider(
+                      12,
+                      3,
+                      handlerColor: Colors.black,
+                      onSelectionEnd: (a, b, c) {
+
+                      },
+                      baseColor: Colors.grey.withOpacity(0.5),
+                      selectionColor: Colors.deepPurple,
+                    ),
+                  ),
                 ],
               );
             case UploadStatus.Uploading:
@@ -80,12 +93,16 @@ class _CreateToDoComponentState extends State<CreateToDoComponent> {
             case UploadStatus.Done:
               SnackBar snackBar = SnackBar(
                 content: Text("ToDoを保存しました！"),
-                action: SnackBarAction(label: "リスト画面へ", onPressed: () {
-                  Navigator.of(context).pop();
-                }),
+                action: SnackBarAction(
+                    label: "リスト画面へ",
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    }),
               );
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                Scaffold.of(context)..hideCurrentSnackBar()..showSnackBar(snackBar);
+                Scaffold.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(snackBar);
               });
               return Container();
           }

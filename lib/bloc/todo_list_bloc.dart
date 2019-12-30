@@ -15,6 +15,12 @@ class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
   Stream<UserModel> get userPersistStream => _userPersistController.stream;
   Sink<UserModel> get userPersistSink => _userPersistController.sink;
 
+  StreamController<int> _tabIndexStreamController = BehaviorSubject.seeded(0);
+  Sink<int> get tabIndexSink => _tabIndexStreamController.sink;
+
+  ToDoListModel _model;
+
+
   ToDoListBLoC() {
     Stream<UserModel> _userStream = repository.listenUserState();
 
@@ -43,6 +49,8 @@ class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
 
             list.value.add(ToDoModel.fromJson(data));
           }
+
+          _model = list;
           return list;
         });
 
@@ -55,6 +63,30 @@ class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
     userPersistStream.listen((user) {
       user.loginDate = DateTime.now();
       repository.create(user);
+    });
+
+    _tabIndexStreamController.stream.listen((index) {
+
+      var values;
+
+      if (index == 0) {
+
+        values = _model.value.where((todoModel) => todoModel.status == ToDoStatus.ToDo);
+
+      } else if (index == 1) {
+
+        values = _model.value.where((todoModel) => todoModel.status == ToDoStatus.Done);
+
+      } else if (index == 2) {
+
+         values = _model.value.where((todoModel) => todoModel.status == ToDoStatus.Failed);
+
+      }
+
+      if (values == null) return;
+
+      baseController.add(values);
+
     });
   }
 

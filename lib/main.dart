@@ -8,7 +8,10 @@ import 'ui/page/todo_list_page.dart';
 
 void main() => runApp(MaterialApp(
       title: "ToDayDo",
-      theme: ThemeData(canvasColor: Colors.white, primarySwatch: Colors.amber),
+      theme: ThemeData(
+          canvasColor: Colors.white,
+          primarySwatch: Colors.deepPurple,
+          backgroundColor: Colors.blueGrey),
       home: Provider<AppBLoC>(
         create: (_) => AppBLoC(),
         dispose: (_, bloc) => bloc.dispose(),

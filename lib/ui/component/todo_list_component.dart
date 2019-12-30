@@ -8,7 +8,22 @@ class ToDoListComponent extends StatefulWidget {
   _ToDoListComponentState createState() => _ToDoListComponentState();
 }
 
-class _ToDoListComponentState extends State<ToDoListComponent> {
+class _ToDoListComponentState extends State<ToDoListComponent>
+    with TickerProviderStateMixin {
+  TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = new TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _tabController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of<ToDoListBLoC>(context);
@@ -38,26 +53,43 @@ class _ToDoListComponentState extends State<ToDoListComponent> {
                 ),
               ));
 
+
+
         return ListView.builder(
           itemCount: todoListSnapShot.data.value.length,
           itemBuilder: (context, index) {
             var todo = todoListSnapShot.data.value[index];
 
-            return CheckboxListTile(
-              value: false,
-              title: Text(
-                todo.todo,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
+            return Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
               ),
-              controlAffinity: ListTileControlAffinity.leading,
-              onChanged: (value) {},
+              elevation: 10,
+              child: ListTile(
+                leading: Checkbox(
+                  value: true,
+                  onChanged: (value) {},
+                ),
+                title: Text(todo.todo),
+              ),
             );
           },
         );
+
       },
     );
+  }
+
+  Widget _createListView(ToDoListBLoC bloc) {
+
+    return StreamBuilder<ToDoListModel>(
+      stream: bloc.baseStream,
+      builder: (context, snapShot) {
+
+
+
+      },
+    );
+
   }
 }

@@ -21,32 +21,10 @@ class CreateToDoBLoC with BaseBLoC<UploadStatus, String> {
   String _textBuffer;
   DocumentReference _userRef;
 
-  StreamController<double> _sliderActionController = BehaviorSubject();
-  Sink<double> get sliderActionSink => _sliderActionController.sink;
-
-  StreamController<double> _sliderValueController = BehaviorSubject();
-  Stream<double> get sliderValueStream => _sliderValueController.stream;
-
   CreateToDoBLoC() {
 
-    _sliderActionController.stream.listen((value) {
-      if (value >= 0 && value < 0.25) {
-        _sliderValueController.add(0);
-      } else if (value >= 0.25 && value < 0.5) {
-        _sliderValueController.add(0.25);
-      } else if (value >= 0.5 && value < 0.75) {
-        _sliderValueController.add(0.5);
-      } else if (value >= 0.75 && value < 1.0) {
-        _sliderValueController.add(0.75);
-      } else if (value >= 1.0) {
-        _sliderValueController.add(1.0);
-      } else if (value < 0) {
-        _sliderValueController.add(0);
-      }
-    });
-    
-    actionController.stream.listen((text) {
 
+    actionController.stream.listen((text) {
       baseController.add(UploadStatus.Uploading);
 
       if (text != null && text.isNotEmpty) {
@@ -62,11 +40,12 @@ class CreateToDoBLoC with BaseBLoC<UploadStatus, String> {
 
     FirebaseAuth.instance.currentUser()
         .then((user) => user.uid)
-    .then((uid) => _userRef = Firestore.instance.collection(UserModel.collectionName).document(uid));
+        .then((uid) =>
+    _userRef =
+        Firestore.instance.collection(UserModel.collectionName).document(uid));
   }
 
-  ToDoModel _createToDo(String text, DocumentReference ref) {
-
+  ToDoModel _createToDo(String text, DocumentReference sender) {
     DateTime currentDate = DateTime.now();
 
     int year = currentDate.year;
@@ -101,7 +80,7 @@ class CreateToDoBLoC with BaseBLoC<UploadStatus, String> {
       day++;
     }
     DateTime tomorrow = DateTime(year, month, day);
-    return ToDoModel(text, tomorrow, ref);
+    return ToDoModel(text, tomorrow, sender: sender);
   }
 
   bool isLeapYear(int year) {
@@ -113,6 +92,5 @@ class CreateToDoBLoC with BaseBLoC<UploadStatus, String> {
     if (year % 4 == 0) return true;
 
     return false;
-
   }
 }

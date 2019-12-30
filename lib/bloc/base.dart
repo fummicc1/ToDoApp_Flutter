@@ -9,7 +9,7 @@ mixin BaseBLoC<V, A> {
 
   @protected Repository repository = Repository();
 
-  @protected StreamController<V> baseController = BehaviorSubject<V>();
+  @protected StreamController<V> baseController = StreamController<V>();
   Stream<V> get baseStream => baseController.stream;
 
   @protected StreamController<A> actionController = StreamController<A>();
