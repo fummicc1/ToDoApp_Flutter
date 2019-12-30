@@ -37,6 +37,7 @@ class _CreateToDoComponentState extends State<CreateToDoComponent> {
           switch (snapShot.data) {
             case UploadStatus.Idle:
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
                     margin: EdgeInsets.all(16),
@@ -73,6 +74,36 @@ class _CreateToDoComponentState extends State<CreateToDoComponent> {
                       },
                     ),
                   ),
+                  Center(
+                    child: StreamBuilder<bool>(
+                        stream: bloc.isSwitchOnStream,
+                        initialData: false,
+                        builder: (context, switchSnapshot) {
+                          if (switchSnapshot.data)
+                            _showTimePicker(context, bloc);
+
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              StreamBuilder<TimeOfDay>(
+                                  stream: bloc.deadlineStream,
+                                  builder: (context, timeSnapShot) {
+                                    if (!timeSnapShot.hasData ||
+                                        !switchSnapshot.data)
+                                      return Text("オプション: 締め切りの時刻を設定する");
+
+                                    return Text(timeSnapShot.data.toString());
+                                  }),
+                              Switch(
+                                value: switchSnapshot.data,
+                                onChanged: (value) {
+                                  bloc.isSwitchOnSink.add(value);
+                                },
+                              ),
+                            ],
+                          );
+                        }),
+                  ),
                 ],
               );
             case UploadStatus.Uploading:
@@ -91,12 +122,29 @@ class _CreateToDoComponentState extends State<CreateToDoComponent> {
                   ..hideCurrentSnackBar()
                   ..showSnackBar(snackBar);
               });
-              return Container();
+              return Center(
+                child: IconButton(
+                  icon: Icon(Icons.done),
+                  iconSize: 64,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              );
           }
         }
-
         return Container();
       },
     );
+  }
+
+  void _showTimePicker(BuildContext context, CreateToDoBLoC bloc) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.now(),).then((time) {
+        bloc.deadlineSink.add(time);
+      });
+    });
   }
 }

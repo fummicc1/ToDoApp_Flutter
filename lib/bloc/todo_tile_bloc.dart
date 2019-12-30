@@ -6,10 +6,16 @@ class ToDoTileBLoC with BaseBLoC<bool, bool> {
 
   ToDoTileBLoC(this.model) {
     actionController.stream.listen((value) {
+
+      if (model.status == ToDoStatus.Failed) {
+        baseController.add(null);
+        return;
+      }
+
       final ref = model.ref;
       repository.update({
         "is_done": value,
-      }, ref).catchError((error) => baseController.addError(error)).then((_) {
+      }, ref).then((_) {
         baseController.add(value);
       });
     });
