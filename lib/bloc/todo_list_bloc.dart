@@ -7,19 +7,13 @@ import 'package:today_do/model/user.dart';
 import 'base.dart';
 
 class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
-  final StreamController<UserModel> _userController = BehaviorSubject();
+  final BehaviorSubject<UserModel> _userController = BehaviorSubject();
   Stream<UserModel> get userStream => _userController.stream;
   Sink<UserModel> get userSink => _userController.sink;
 
-  StreamController<UserModel> _userPersistController = PublishSubject();
+  BehaviorSubject<UserModel> _userPersistController = BehaviorSubject();
   Stream<UserModel> get userPersistStream => _userPersistController.stream;
   Sink<UserModel> get userPersistSink => _userPersistController.sink;
-
-  StreamController<int> _tabIndexStreamController = BehaviorSubject.seeded(0);
-  Sink<int> get tabIndexSink => _tabIndexStreamController.sink;
-
-  ToDoListModel _model;
-
 
   ToDoListBLoC() {
     Stream<UserModel> _userStream = repository.listenUserState();
@@ -49,8 +43,6 @@ class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
 
             list.value.add(ToDoModel.fromJson(data));
           }
-
-          _model = list;
           return list;
         });
 
@@ -64,31 +56,11 @@ class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
       user.loginDate = DateTime.now();
       repository.create(user);
     });
-
-    _tabIndexStreamController.stream.listen((index) {
-
-      var values;
-
-      if (index == 0) {
-
-        values = _model.value.where((todoModel) => todoModel.status == ToDoStatus.ToDo);
-
-      } else if (index == 1) {
-
-        values = _model.value.where((todoModel) => todoModel.status == ToDoStatus.Done);
-
-      } else if (index == 2) {
-
-         values = _model.value.where((todoModel) => todoModel.status == ToDoStatus.Failed);
-
-      }
-
-      if (values == null) return;
-
-      baseController.add(values);
-
-    });
   }
+
+  List<ToDoModel> getToDoStatus(ToDoListModel model) => model.value.where((todo) => todo.status == ToDoStatus.ToDo).toList();
+  List<ToDoModel> getDoneStatus(ToDoListModel model) => model.value.where((todo) => todo.status == ToDoStatus.Done).toList();
+  List<ToDoModel> getFailedStatus(ToDoListModel model) => model.value.where((todo) => todo.status == ToDoStatus.Failed).toList();
 
   @override
   void dispose() {

@@ -32,31 +32,46 @@ void main() => runApp(MaterialApp(
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "ToDayDo",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
+    return DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              "ToDayDo",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
+            actions: <Widget>[
+              IconButton(
+                padding: EdgeInsets.only(right: 16),
+                icon: Icon(Icons.add_circle),
+                iconSize: 32,
+                onPressed: () {
+                  Navigator.of(context).pushNamed("/create_todo");
+                },
+              ),
+            ],
+            bottom: TabBar(
+              tabs: <Widget>[
+                Tab(
+                  text: "ToDo",
+                ),
+                Tab(
+                  text: "Done",
+                ),
+                Tab(
+                  text: "Failed",
+                ),
+              ],
+            ),
           ),
-        ),
-        actions: <Widget>[
-          IconButton(
-            padding: EdgeInsets.only(right: 16),
-            icon: Icon(Icons.add_circle),
-            iconSize: 32,
-            onPressed: () {
-              Navigator.of(context).pushNamed("/create_todo");
-            },
+          body: Provider<ToDoListBLoC>(
+            create: (_) => ToDoListBLoC(),
+            dispose: (_, bloc) => bloc.dispose(),
+            child: ToDoListPage(),
           ),
-        ],
-      ),
-      body: Provider<ToDoListBLoC>(
-        create: (_) => ToDoListBLoC(),
-        dispose: (_, bloc) => bloc.dispose(),
-        child: ToDoListPage(),
-      ),
-    );
+        ));
   }
 }

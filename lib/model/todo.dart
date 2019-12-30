@@ -18,8 +18,9 @@ class ToDoModel with BaseModel {
 
   ToDoStatus get status {
     final DateTime current = DateTime.now();
-    if (current.isAfter(deadline)) return isDone ? ToDoStatus.Done : ToDoStatus.Failed;
-    return ToDoStatus.ToDo;
+    if (isDone) return ToDoStatus.Done;
+    if (current.isAfter(deadline)) return ToDoStatus.Failed;
+    if (current.isBefore(deadline)) return ToDoStatus.ToDo;
   }
 
   DocumentReference sender;

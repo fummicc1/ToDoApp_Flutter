@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_circular_slider/flutter_circular_slider.dart';
 import 'package:provider/provider.dart';
 import 'package:today_do/bloc/create_todo.dart';
 
@@ -72,18 +71,6 @@ class _CreateToDoComponentState extends State<CreateToDoComponent> {
                               );
                             });
                       },
-                    ),
-                  ),
-                  Center(
-                    child: SingleCircularSlider(
-                      12,
-                      3,
-                      handlerColor: Colors.black,
-                      onSelectionEnd: (a, b, c) {
-
-                      },
-                      baseColor: Colors.grey.withOpacity(0.5),
-                      selectionColor: Colors.deepPurple,
                     ),
                   ),
                 ],
