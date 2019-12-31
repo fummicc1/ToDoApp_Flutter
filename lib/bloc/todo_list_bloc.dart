@@ -7,11 +7,11 @@ import 'package:today_do/model/user.dart';
 import 'base.dart';
 
 class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
-  final StreamController<UserModel> _userController = BehaviorSubject();
+  final BehaviorSubject<UserModel> _userController = BehaviorSubject();
   Stream<UserModel> get userStream => _userController.stream;
   Sink<UserModel> get userSink => _userController.sink;
 
-  StreamController<UserModel> _userPersistController = PublishSubject();
+  BehaviorSubject<UserModel> _userPersistController = BehaviorSubject();
   Stream<UserModel> get userPersistStream => _userPersistController.stream;
   Sink<UserModel> get userPersistSink => _userPersistController.sink;
 
@@ -57,6 +57,10 @@ class ToDoListBLoC with BaseBLoC<ToDoListModel, void> {
       repository.create(user);
     });
   }
+
+  List<ToDoModel> getToDoStatus(ToDoListModel model) => model.value.where((todo) => todo.status == ToDoStatus.ToDo).toList();
+  List<ToDoModel> getDoneStatus(ToDoListModel model) => model.value.where((todo) => todo.status == ToDoStatus.Done).toList();
+  List<ToDoModel> getFailedStatus(ToDoListModel model) => model.value.where((todo) => todo.status == ToDoStatus.Failed).toList();
 
   @override
   void dispose() {

@@ -9,10 +9,10 @@ mixin BaseBLoC<V, A> {
 
   @protected Repository repository = Repository();
 
-  @protected StreamController<V> baseController = BehaviorSubject<V>();
+  @protected BehaviorSubject<V> baseController = BehaviorSubject<V>();
   Stream<V> get baseStream => baseController.stream;
 
-  @protected StreamController<A> actionController = StreamController<A>();
+  @protected BehaviorSubject<A> actionController = BehaviorSubject<A>();
   Sink<A> get baseSink => actionController.sink;
 
   void dispose() {

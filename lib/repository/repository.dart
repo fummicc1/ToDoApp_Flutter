@@ -30,4 +30,6 @@ class Repository {
   Future<UserModel> signinAnonymously() => _authProvider
       .signinAnonymously()
       .then((result) => result.user == null ? null : UserModel(result.user));
+
+  Future<void> update(Map<String, dynamic> json, DocumentReference ref) => _dataProvider.update(json, ref);
 }

@@ -15,4 +15,6 @@ class FirestoreProvider {
   Future<void> delete(DocumentReference ref) => ref.delete();
 
   Future<void> create(DocumentReference ref, Map<String, dynamic> data) => ref.setData(data);
+
+  Future<void> update(Map<String, dynamic> json, DocumentReference ref, {bool merge = true}) => ref.setData(json, merge: merge);
 }
