@@ -92,7 +92,7 @@ class _CreateToDoComponentState extends State<CreateToDoComponent> {
                                         !switchSnapshot.data)
                                       return Text("オプション: 締め切りの時刻を設定する");
 
-                                    return Text(timeSnapShot.data.toString());
+                                    return Text(timeSnapShot.data.format(context));
                                   }),
                               Switch(
                                 value: switchSnapshot.data,
