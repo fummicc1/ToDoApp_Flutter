@@ -10,33 +10,37 @@ import '../model/todo.dart';
 import 'base.dart';
 
 enum UploadStatus {
-  Idle,
+  Yet,
+  Ready,
   Uploading,
   Done,
 }
 
-class CreateToDoBLoC with BaseBLoC<UploadStatus, String> {
-
-  BehaviorSubject<bool> _isSwitchOnController = BehaviorSubject();
-  Stream<bool> get isSwitchOnStream => _isSwitchOnController.stream;
-  Sink<bool> get isSwitchOnSink => _isSwitchOnController.sink;
+class CreateToDoBLoC with BaseBLoC<UploadStatus, void> {
 
   BehaviorSubject<TimeOfDay> _deadlineSubject = BehaviorSubject();
   Sink<TimeOfDay> get deadlineSink => _deadlineSubject.sink;
   Stream<TimeOfDay> get deadlineStream => _deadlineSubject.stream;
 
-  String _textBuffer;
+  BehaviorSubject<String> _todoContentSubject = BehaviorSubject();
+  Sink<String> get todoContentSink => _todoContentSubject.sink;
+
+  BehaviorSubject<DateTime> _todoDeadlineSubject = BehaviorSubject();
+  Sink<DateTime> get todoDeadlineSink => _todoDeadlineSubject.sink;
+
   DocumentReference _userRef;
 
   CreateToDoBLoC() {
 
-    actionController.stream.listen((text) {
+    if (_todoContentSubject.value.isNotEmpty && _todoDeadlineSubject.value != null) {
+      baseController.add(UploadStatus.Ready);
+    }
+
+    actionController.stream.listen((value) {
+
       baseController.add(UploadStatus.Uploading);
 
-      if (text != null && text.isNotEmpty) {
-        _textBuffer = text;
-      }
-      ToDoModel todo = _createToDo(_textBuffer, _userRef);
+      ToDoModel todo = _createToDo(_todoContentSubject.value, _userRef);
       repository.create(todo).catchError((error) {
         baseController.addError(error);
       }).then((_) {
@@ -51,7 +55,7 @@ class CreateToDoBLoC with BaseBLoC<UploadStatus, String> {
         Firestore.instance.collection(UserModel.collectionName).document(uid));
   }
 
-  ToDoModel _createToDo(String text, DocumentReference sender, {TimeOfDay selectedTime}) {
+  ToDoModel _createToDo(String text, DocumentReference sender, {DateTime selectedTime}) {
 
     DateTime deadline;
 

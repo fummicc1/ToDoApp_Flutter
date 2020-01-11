@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:today_do/bloc/create_todo.dart';
+import 'package:intl/intl.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 class CreateToDoComponent extends StatefulWidget {
   @override
@@ -8,13 +10,16 @@ class CreateToDoComponent extends StatefulWidget {
 }
 
 class _CreateToDoComponentState extends State<CreateToDoComponent> {
+
+  final format = DateFormat("yyyy/MM/dd HH:mm");
+
   @override
   Widget build(BuildContext context) {
     var bloc = Provider.of<CreateToDoBLoC>(context);
 
     return StreamBuilder<UploadStatus>(
       stream: bloc.baseStream,
-      initialData: UploadStatus.Idle,
+      initialData: UploadStatus.Yet,
       builder: (context, snapShot) {
         if (snapShot.hasError) {
           SnackBar snackBar = SnackBar(
@@ -35,7 +40,7 @@ class _CreateToDoComponentState extends State<CreateToDoComponent> {
 
         if (snapShot.hasData) {
           switch (snapShot.data) {
-            case UploadStatus.Idle:
+            case UploadStatus.Yet:
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
@@ -48,64 +53,34 @@ class _CreateToDoComponentState extends State<CreateToDoComponent> {
                             borderRadius: BorderRadius.circular(24),
                           )),
                       onSubmitted: (text) {
-                        showDialog(
-                            context: context,
-                            builder: (_) {
-                              return AlertDialog(
-                                title: Text("この内容で保存しますか？"),
-                                content: Text(text),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    child: Text("キャンセル"),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  FlatButton(
-                                    child: Text("保存する"),
-                                    onPressed: () {
-                                      bloc.baseSink.add(text);
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            });
+
                       },
                     ),
                   ),
-                  Center(
-                    child: StreamBuilder<bool>(
-                        stream: bloc.isSwitchOnStream,
-                        initialData: false,
-                        builder: (context, switchSnapshot) {
-                          if (switchSnapshot.data)
-                            _showTimePicker(context, bloc);
-
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              StreamBuilder<TimeOfDay>(
-                                  stream: bloc.deadlineStream,
-                                  builder: (context, timeSnapShot) {
-                                    if (!timeSnapShot.hasData ||
-                                        !switchSnapshot.data)
-                                      return Text("オプション: 締め切りの時刻を設定する");
-
-                                    return Text(timeSnapShot.data.format(context));
-                                  }),
-                              Switch(
-                                value: switchSnapshot.data,
-                                onChanged: (value) {
-                                  bloc.isSwitchOnSink.add(value);
-                                },
-                              ),
-                            ],
-                          );
-                        }),
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    child: DateTimeField(
+                      decoration: InputDecoration(
+                        hintText: "期限を設定",
+                      ),
+                      format: format,
+                      onShowPicker: (context, currentValue) async {
+                        final now = DateTime.now();
+                        final lastDate = DateTime(now.year, now.month, now.day + 1);
+                        final date = await showDatePicker(context: context, initialDate: currentValue ?? now, firstDate: currentValue ?? now, lastDate: lastDate);
+                        if (date != null) {
+                          final time = await showTimePicker(context: context, initialTime: TimeOfDay.fromDateTime(currentValue ?? now));
+                          return DateTimeField.combine(date, time);
+                        } else {
+                          return currentValue;
+                        }
+                      },
+                    ),
                   ),
                 ],
               );
+            case UploadStatus.Ready:
+              return Center(child: FlatButton.icon(onPressed: null, icon: Icon(Icons.save), label: null),);
             case UploadStatus.Uploading:
               return Center(child: CircularProgressIndicator());
             case UploadStatus.Done:

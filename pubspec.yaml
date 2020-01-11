@@ -30,6 +30,8 @@ dependencies:
   cloud_firestore: ^0.13.0+1
   firebase_auth: ^0.15.3
   rxdart: ^0.23.1
+  datetime_picker_formfield: ^1.0.0
+  flare_flutter:
 
 dev_dependencies:
   flutter_test:

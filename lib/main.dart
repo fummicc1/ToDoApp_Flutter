@@ -6,27 +6,27 @@ import 'package:today_do/ui/page/create_todo_page.dart';
 import 'package:today_do/ui/page/todo_list_page.dart';
 import 'ui/page/todo_list_page.dart';
 
-void main() => runApp(MaterialApp(
-      title: "ToDayDo",
-      theme: ThemeData(
-          canvasColor: Colors.white,
-          primarySwatch: Colors.deepPurple,
-          backgroundColor: Colors.blueGrey),
-      home: Provider<AppBLoC>(
-        create: (_) => AppBLoC(),
-        dispose: (_, bloc) => bloc.dispose(),
-        child: MyApp(),
-      ),
-      routes: {
-        "/create_todo": (context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text("ToDo作成"),
-            ),
-            body: CreateToDoPage(),
-          );
+void main() => runApp(Provider<AppBLoC>(
+      create: (_) => AppBLoC(),
+      dispose: (_, bloc) => bloc.dispose(),
+      child: MaterialApp(
+        title: "ToDayDo",
+        theme: ThemeData(
+            canvasColor: Colors.white,
+            primarySwatch: Colors.deepPurple,
+            backgroundColor: Colors.blueGrey),
+        home: MyApp(),
+        routes: {
+          "/create_todo": (context) {
+            return Scaffold(
+              appBar: AppBar(
+                title: Text("ToDo作成"),
+              ),
+              body: CreateToDoPage(),
+            );
+          },
         },
-      },
+      ),
     ));
 
 class MyApp extends StatelessWidget {
